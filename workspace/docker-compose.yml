@@ -1,0 +1,71 @@
+version: "3.7"
+
+networks:
+  workspace:
+    name: workspace
+    external: true
+
+services:
+  traefik:
+    image: traefik:v2.2
+    networks:
+      - workspace
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./.docker/traefik:/etc/traefik
+    command:
+      - --api.insecure=true
+      - --providers.docker
+
+  redis:
+    image: redis:latest
+    networks:
+      - workspace
+      
+  mailpit:
+    image: 'axllent/mailpit:latest'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mail.rule=Host(`mailpit.localhost`)"
+      - "traefik.http.services.mail.loadbalancer.server.port=8025"
+    ports:
+      - '1025:1025'
+      - '8025:8025' 
+    networks:
+      - workspace
+    depends_on:
+      - traefik
+
+  mysql:
+    image: mysql/mysql-server
+    environment:
+      MYSQL_DATABASE: docker_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    networks:
+      - workspace
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./.docker/mysql:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.db.rule=Host(`phpmyadmin.localhost`)"
+    networks:
+      - workspace
+    ports:
+      - 8088:80
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - mysql
+      - traefik

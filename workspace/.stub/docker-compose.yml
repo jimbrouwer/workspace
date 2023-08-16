@@ -1,0 +1,29 @@
+version: "3.7"
+
+networks:
+  workspace:
+    external: true
+
+services:
+  web-{{__PROJECT__}}:
+    image: nginx:latest
+    networks:
+      - workspace
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{__PROJECT__}}.rule=Host(`{{__PROJECT__}}.localhost`)"
+      - "traefik.http.services.{{__PROJECT__}}.loadbalancer.server.port=80"
+    volumes:
+      - ./public:/public
+      - ./.docker/nginx/vhost.conf:/etc/nginx/conf.d/vhost.conf
+    depends_on:
+      - php-{{__PROJECT__}}
+
+  php-{{__PROJECT__}}:
+    build:
+      context: .docker/php
+      dockerfile: Dockerfile
+    networks:
+      - workspace
+    volumes:
+      - ./public:/public
