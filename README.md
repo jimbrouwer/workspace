@@ -90,8 +90,4 @@ Additionally use Docker desktop to stop a service.
 
 Feel free to play around, or suggest any issues.
 
-::: warning
-__Note:__ \
-This workspace is not meant to run on a production server.
-:::
-
+> :warning: This workspace is not meant to run on a production server.
