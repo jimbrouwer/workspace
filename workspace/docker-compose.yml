@@ -25,6 +25,18 @@ services:
     image: redis:latest
     networks:
       - workspace
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    networks:
+      - workspace
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.localhost`)"
+      - "traefik.http.services.rabbitmq.loadbalancer.server.port=15672"
+    ports:
+      - 5672:5672
+      - 15672:15672
       
   mailpit:
     image: 'axllent/mailpit:latest'

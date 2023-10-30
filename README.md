@@ -16,6 +16,7 @@ A simple local development environment for running multiple applications, with a
 
 - __Traefik__
 - __Redis__
+- __RabbitMQ__
 - __MySQL__
 - __phpMyAdmin__
 - __Mailpit__
@@ -31,7 +32,7 @@ Before running a project make sure the workspace is started.
 This can be easily done:
 ```
 #bash
-./app start
+./app.sh start
 
 #make
 make start
@@ -45,7 +46,7 @@ All services at this point will be available.
 
 ```
 #bash
-./app new
+./app.sh new
 
 #make
 make new
@@ -61,10 +62,10 @@ Note that the workspace environment should be started prior.
 
 ```
 #bash: start specific project
-./app start my-project
+./app.sh start my-project
 
 #bash: start all projects
-./app start
+./app.sh start
 
 #make: start all projects
 make start
@@ -76,10 +77,10 @@ Additionally use Docker desktop to start a service.
 #### Stop project
 ```
 #bash: stop specific project
-./app stop my-project
+./app.sh stop my-project
 
 #bash: stop all projects
-./app stop 
+./app.sh stop 
 
 #make: stop all projects
 make stop 
